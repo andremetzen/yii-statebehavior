@@ -1,15 +1,15 @@
 Yii state behavior
 ====================
 
-Esta extenção tem como objetivo facilitar a implementação do padrão de projeto
+This extension is designed to simplify the implementation of design pattern
 state.
 
-### Instalação
-Só descompactar dentro do diretório extensions. (recomendo descompactar dentro da pasta yii-state)
+### Installation
+Just unzip into the extensions directory. (I recommend to unpack into the folder yii-state)
 
-### Uso
+### Usage
 
-O exemplo abaixo é a utilização do state behavior em uma classe Account.
+The following example is the use of state behavior in an Account class.
 
     class Account extends CActiveRecord
     {
@@ -20,13 +20,13 @@ O exemplo abaixo é a utilização do state behavior em uma classe Account.
         {
             return array(
                 'state'=>array(
-                    'class' => 'ext.yii-state.EStateBehavior', //alias para a classe
+                    'class' => 'ext.yii-state.EStateBehavior', //alias for the class
                     //'prefix' => 'Account', //optional
-                    'attr' => 'status', // nome do atributo que armazenará o status atual
-                    'initial' => 'active', // nome do status inicial
-                    'transitions' => array( // os estados disponiveis e para quais transições são permitidas 
+                    'attr' => 'status', //attribute name that stores the current status
+                    'initial' => 'active', // name of the initial status
+                    'transitions' => array( // available states and what transactions are allowed
                         'active' => 'inactive,blocked',
-                        'inactive' => 'active,blocked',
+                        'inactive' => 'active',
                         'blocked' => 'active',
                     ),
                 ),
@@ -35,17 +35,16 @@ O exemplo abaixo é a utilização do state behavior em uma classe Account.
 
     }
 
-Você pode implementar uma classe abistrata para especificar todos os metodos que devem existir nas classes dos estados.
+You can implement an abstract class to specify all the methods that must exist in the states classes.
 
     abstract class AccountStatus extends EStateStatus
     {
         abstract public function canLogin();
     }
 
-O nome das classes dos estatos devem começar com o mesmo nome da classe do modelo. Opcionalmente você pode alterar esse prefixo nas configurações.
+The name of the states classes must begin with the same name as the class model. Optionally you can change this prefix in the settings.
 
-É importante notar que os metodos onExit e onEntry devem retornar true para a mudança de estado seja efetuada corretamente.
-
+Importantly, the methods onExit and onEntry should return true for the state change is performed correctly.
 
     class AccountInactive extends AccountStatus
     {
@@ -56,7 +55,7 @@ O nome das classes dos estatos devem começar com o mesmo nome da classe do mode
         
         public function onExit($event)
         {
-            // faça alguma coisa com $event->data
+            // do something with $event->data
             return true;
         }
     }
@@ -70,7 +69,7 @@ O nome das classes dos estatos devem começar com o mesmo nome da classe do mode
 
         public function onEntry($event)
         {
-            // faça alguma coisa
+            // do something
             parent::onEntry($event);
         }
     }
