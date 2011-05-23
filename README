@@ -1,7 +1,7 @@
 Yii state behavior
 ====================
 
-This extension is designed to simplify the implementation of design pattern
+This extension is designed to simplify the implementation of the design pattern
 state.
 
 ## Requirements
@@ -9,12 +9,14 @@ state.
 Tested under Yii 1.1.6.
 
 ## Installation
-Just unzip into the extensions directory. (I recommend to unpack into the folder yii-state)
+Just unzip into the extensions directory. (I recommend to unpack it into the folder yii-state)
 
 ## Usage
 
 The following example is the use of state behavior in an Account class.
 
+~~~
+[php]
 class Account extends CActiveRecord
 {
 
@@ -38,18 +40,24 @@ class Account extends CActiveRecord
     }
 
 }
+~~~
 
-You can implement an abstract class to specify all the methods that must exist in the states classes.
+You can implement an abstract class to specify all the methods that must exist in the state classes.
 
+~~~
+[php]
 abstract class AccountStatus extends EStateStatus
 {
     abstract public function canLogin();
 }
+~~~
 
-The name of the states classes must begin with the same name as the class model. Optionally you can change this prefix in the settings.
+The name of the state classes must begin with the same name as the class model. Optionally you can change this prefix in the settings.
 
-Importantly, the methods onExit and onEntry should return true for the state change is performed correctly.
+Importantly, the methods onExit and onEntry should return true in order to state change is performed correctly.
 
+~~~
+[php]
 class AccountInactive extends AccountStatus
 {
     public function canLogin()
@@ -74,7 +82,7 @@ class AccountActive extends AccountStatus
     public function onEntry($event)
     {
         // do something
-        parent::onEntry($event);
+        return parent::onEntry($event);
     }
 }
 
@@ -85,15 +93,19 @@ class AccountBlocked extends AccountStatus
         return false;
     }
 }
+~~~
 
-To invoke the methods implemented by the states just do:
+To invoke the methods implemented by the state just do:
 
+~~~
+[php]
 $account = new Account(); //created in the active state
 $account->canLogin(); //return true
 
 $account->changeTo('blocked'); // change the state to blocked
 $account->canLogin(); // return false
-    
+~~~    
+
 ##Resources
 
 
