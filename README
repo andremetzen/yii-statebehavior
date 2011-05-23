@@ -4,80 +4,97 @@ Yii state behavior
 This extension is designed to simplify the implementation of design pattern
 state.
 
-### Installation
+## Requirements
+
+Tested under Yii 1.1.6.
+
+## Installation
 Just unzip into the extensions directory. (I recommend to unpack into the folder yii-state)
 
-### Usage
+## Usage
 
 The following example is the use of state behavior in an Account class.
 
-    class Account extends CActiveRecord
+class Account extends CActiveRecord
+{
+
+...
+
+    public function behaviors()
     {
-
-    ...
-
-        public function behaviors()
-        {
-            return array(
-                'state'=>array(
-                    'class' => 'ext.yii-state.EStateBehavior', //alias for the class
-                    //'prefix' => 'Account', //optional
-                    'attr' => 'status', //attribute name that stores the current status
-                    'initial' => 'active', // name of the initial status
-                    'transitions' => array( // available states and what transactions are allowed
-                        'active' => 'inactive,blocked',
-                        'inactive' => 'active',
-                        'blocked' => 'active',
-                    ),
+        return array(
+            'state'=>array(
+                'class' => 'ext.yii-state.EStateBehavior', //alias for the class
+                //'prefix' => 'Account', //optional
+                'attr' => 'status', //attribute name that stores the current status
+                'initial' => 'active', // name of the initial status
+                'transitions' => array( // available states and what transactions are allowed
+                    'active' => 'inactive,blocked',
+                    'inactive' => 'active',
+                    'blocked' => 'active',
                 ),
-            );
-        }
-
+            ),
+        );
     }
+
+}
 
 You can implement an abstract class to specify all the methods that must exist in the states classes.
 
-    abstract class AccountStatus extends EStateStatus
-    {
-        abstract public function canLogin();
-    }
+abstract class AccountStatus extends EStateStatus
+{
+    abstract public function canLogin();
+}
 
 The name of the states classes must begin with the same name as the class model. Optionally you can change this prefix in the settings.
 
 Importantly, the methods onExit and onEntry should return true for the state change is performed correctly.
 
-    class AccountInactive extends AccountStatus
+class AccountInactive extends AccountStatus
+{
+    public function canLogin()
     {
-        public function canLogin()
-        {
-            return false;
-        }
-        
-        public function onExit($event)
-        {
-            // do something with $event->data
-            return true;
-        }
+        return false;
+    }
+    
+    public function onExit($event)
+    {
+        // do something with $event->data
+        return true;
+    }
+}
+
+class AccountActive extends AccountStatus
+{
+    public function canLogin()
+    {
+        return true;
     }
 
-    class AccountActive extends AccountStatus
+    public function onEntry($event)
     {
-        public function canLogin()
-        {
-            return true;
-        }
-
-        public function onEntry($event)
-        {
-            // do something
-            parent::onEntry($event);
-        }
+        // do something
+        parent::onEntry($event);
     }
+}
 
-    class AccountBlocked extends AccountStatus
+class AccountBlocked extends AccountStatus
+{
+    public function canLogin()
     {
-        public function canLogin()
-        {
-            return false;
-        }
+        return false;
     }
+}
+
+To invoke the methods implemented by the states just do:
+
+$account = new Account(); //created in the active state
+$account->canLogin(); //return true
+
+$account->changeTo('blocked'); // change the state to blocked
+$account->canLogin(); // return false
+    
+##Resources
+
+
+ * [Project page](http://github.com/andremetzen/yii-statebehavior)
