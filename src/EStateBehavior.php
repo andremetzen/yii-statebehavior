@@ -87,7 +87,7 @@ class EStateBehavior extends CBehavior
             $this->status->onEntry(new EStateEvent($this, $data));
             return true;
         }
-        else
+        else {
             throw new CException('Cant change from '.$this->getStatusId().' to status '.$id);
         }
     }
